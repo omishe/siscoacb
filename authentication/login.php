@@ -40,7 +40,7 @@
                     </div>
                     <div>
                         <label for="usuario">Password: </label>
-                        <input type="text" name="password" id="password" placeholder="contraseña" required><br />
+                        <input type="password" name="password" id="password" placeholder="contraseña" required><br />
                     </div>
 
                     <input type="hidden" name="optionLbl" id="optionLbl" value="GetUser">

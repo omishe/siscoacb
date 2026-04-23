@@ -18,7 +18,9 @@ body {
     height: 100vh;
 }
 
-.form-container {
+.form-container,
+.form-container-alert,
+.dashboard-container {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -31,16 +33,34 @@ body {
     gap: 1rem;
 }
 
+.form-container-alert{
+    width: 40%;
+}
+
+.dashboard-container {
+    width: 80%;
+    gap: 1rem;
+}
+
 .title_main {
     font-size: 2rem;
     width: 100%;
     text-align: center;
 }
 
-.inner-container {
+.inner-container,
+.dashboard-inner-container,
+.days-inner-container {
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.days-inner-container {
+    margin: 1rem 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
 .inner-container form {
@@ -56,7 +76,8 @@ body {
     margin: 0.2rem;
 }
 
-.inner-container input[type="button"] {
+.inner-container input[type="button"],
+.days-inner-container input[type="button"] {
     border-radius: 1rem;
     padding: 0.5rem;
     background-color: #07aeea;
@@ -69,7 +90,7 @@ body {
     width: 100%;
 }
 
-.account-field a{
+.account-field a {
     text-decoration: none;
     color: white;
     cursor: pointer;
@@ -78,4 +99,171 @@ body {
 .account-field a:hover {
     color: #0a5cf3;
     text-decoration: underline;
+}
+
+/**************** Estilos exclusivos del dashboard ******************/
+
+.dashboard-inner-container {
+    flex-direction: column;
+}
+
+.container-register a,
+.container-logout a {
+    text-decoration: none;
+    color: #0a5cf3;;
+    cursor: pointer;
+}
+
+.container-register a:hover,
+.container-logout a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+.user_titles,
+.container-register {
+    width: 100%;
+    height: 2rem;
+    background-color: rgba(211, 211, 211, .8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: .2rem .5rem;
+    margin-bottom: .5rem;
+}
+
+.container-graficas {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center center;
+    margin-bottom: 0.5rem;
+}
+
+.container-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* Animacion del contenedor */
+
+.contenedor-carga {
+    width: 12rem;
+    height: 10rem;
+    /* Altura total del contenedor */
+    border: 4px solid #333;
+    border-radius: 1rem 1rem .4rem 0.4rem;
+    position: relative;
+    overflow: hidden;
+    /* Asegura que el relleno no se salga */
+    background-color: #f0f0f0;
+    margin-bottom: 0.5rem;
+}
+
+.relleno,
+.relleno-pileta {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    /* Comienza a llenarse desde abajo */
+    background-color: #2360ea;
+    /* Color del relleno */
+
+    /* Animación */
+    animation: llenar 3s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.relleno-pileta {
+    animation: llenar-pileta 3s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+@keyframes llenar {
+  0% {
+    height: 0%;
+    background-color: #ff5722; /* Color cuando está vacío */
+    border-radius: 1rem 1rem 0 0;
+  }
+  50% {
+    background-color: #ffeb3b; /* Color medio */
+    border-radius: .3rem .3rem 0 0;
+  }
+  100% {
+    height: 80%;
+    background-color: #2360ea; /* Color lleno */
+    border-radius: 0 0 0 0;
+  }
+}
+
+@keyframes llenar-pileta {
+  0% {
+    height: 0%;
+    background-color: #ff5722; /* Color cuando está vacío */
+    border-radius: 1rem 1rem 0 0;
+  }
+  50% {
+    background-color: #ff5722; /* Color medio */
+    border-radius: .3rem .3rem 0 0;
+  }
+  100% {
+    height: 20%;
+    background-color: #ff5722; /* Color lleno */
+    border-radius: 0 0 0 0;
+  }
+}
+
+.container-charge-percent {
+    margin-bottom: 0.5rem;
+}
+
+/* Estilos de las 3 ultimas mediciones */
+.container-recent-measures{
+    background-color: #fff;
+    width: 100%;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+.recent-measure{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.recent-measures-titles{
+    font-weight: bold;
+}
+
+/* Estilos de la grafica de consumo */
+.grafica-consumo {
+    background-color: #FFF;
+    padding: .5rem;
+}
+
+/* Días sin servicio */
+.no-service-days-green{
+    color:green;
+    font-weight: 900;
+}
+
+/* Estilos de barra de logout y dias sin servicio */
+.container-logout{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-logout,
+.container-no-service {
+    width: 100%;
+    background-color: rgba(211, 211, 211, .8);
+    padding: .2rem .5rem;
+    margin-bottom: 0.5rem;
 }
