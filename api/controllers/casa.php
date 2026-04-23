@@ -38,7 +38,9 @@ switch ($body["option"]) {
 
     case "InsertHome":
         $datos = $casa->insert_home($casaDTO);
+        //var_dump($datos);
         echo json_encode('{"value": "true"}');
+        $_SESSION['idCasa'] = $datos[0]['idCasa'];
         break;
 
 

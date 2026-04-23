@@ -30,10 +30,13 @@ class Casa extends Conectar
         $sql->bindValue(3, $casaDTO -> bandera);
         $sql->bindValue(4, $casaDTO -> Habitantes);
         $sql->bindValue(5, $casaDTO -> Usuario_idUsuario);
-        //$sql->bindValue(4, $casaDTO -> habitantes);
-        //$sql->bindValue(5, $casaDTO -> Usuario_idUsuario);
+ 
 
         $sql->execute();
+
+        $sql = "SELECT LAST_INSERT_ID() as idCasa";
+        $sql = $conectar -> prepare($sql);
+        $sql -> execute();
 
         return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -1,0 +1,81 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+    font-size: 16px;
+}
+
+body {
+    background: linear-gradient(180deg, #07aeea 0.000%, #2360ea 100.000%);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.form-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: rgba(116, 109, 105, .3);
+    border-radius: 2rem;
+    border: 1px solid #746D69;
+    padding: 2rem;
+    flex-wrap: wrap;
+    width: 34%;
+    gap: 1rem;
+}
+
+.title_main {
+    font-size: 2rem;
+    width: 100%;
+    text-align: center;
+}
+
+.inner-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.inner-container form {
+    text-align: center;
+}
+
+.inner-container .input-group {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.inner-container input {
+    margin: 0.2rem;
+}
+
+.inner-container input[type="button"] {
+    border-radius: 1rem;
+    padding: 0.5rem;
+    background-color: #07aeea;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.account-field {
+    text-align: center;
+    width: 100%;
+}
+
+.account-field a{
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+}
+
+.account-field a:hover {
+    color: #0a5cf3;
+    text-decoration: underline;
+}

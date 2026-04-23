@@ -1,3 +1,3 @@
 <?php
-    header('Location:authentication/auth_session.php');
+    header('Location:authentication/index.php');
 ?>

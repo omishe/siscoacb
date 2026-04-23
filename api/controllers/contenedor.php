@@ -37,8 +37,14 @@ switch ($body["option"]) {
         break;
 
     case "InsertContainer":
-        $datos = $contenedor -> insert_container($contenedorDTO);
+        $datos = $contenedor->insert_container($contenedorDTO);
+
+        if (!isset($_SESSION['idContenedor'])) {
+            $_SESSION['idContenedor'] = $datos[0]['idContenedor'];
+        }
+
         echo json_encode('{"value": "true"}');
+
         break;
 
     default:

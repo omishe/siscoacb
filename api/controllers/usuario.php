@@ -35,10 +35,13 @@ switch ($body["option"]) {
     // Usuario por usuario
     case 'GetUser':
         $datos = $usuario->get_usuario($usuarioDTO);
+
+        //var_dump($datos[0]['idUsuario']);
         //echo json_encode($datos);
         echo json_encode('{"value": "true"}');
 
         $_SESSION['usuario'] = $usuarioDTO -> usuario;
+        $_SESSION['idUsuario'] = $datos[0]['idUsuario'];
 
         break;
 

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -26,15 +27,32 @@
 
     ?>
 
-    <form action="" method="POST" class="form">
-        <h1 class="login-title">Login</h1>
-        <input type="text" name="usuario" id="usuario" placeholder="usuario" required><br />
-        <input type="text" name="password" id="password" placeholder="contraseña" required><br />
-        <input type="hidden" name="optionLbl" id="optionLbl" value="GetUser">
-        <input type="button" name="submit" id="submit" value="Register" class=" login-button" />
-    </form>
-    <p class="link">Not registered an account yet? <a href="registration.php">Register here</a></p>
+    <div class="container">
 
+        <div class="form-container">
+            <p class="title_main">Sistema de control SISCOACB</p>
+            <div class="inner-container">
+                <form action="" method="POST" class="form">
+                    <h1 class="login-title">Login</h1>
+                    <div class="input-group">
+                        <label for="usuario">Usuario: </label>
+                        <input type="text" name="usuario" id="usuario" placeholder="usuario" required><br />
+                    </div>
+                    <div>
+                        <label for="usuario">Password: </label>
+                        <input type="text" name="password" id="password" placeholder="contraseña" required><br />
+                    </div>
+
+                    <input type="hidden" name="optionLbl" id="optionLbl" value="GetUser">
+                    <input type="button" name="submit" id="submit" value="Login" class=" login-button" />
+                </form>
+            </div>
+            <div class="account-field">
+                <p class="link">Not registered an account yet? <a href="registration.php">Register here</a></p>
+            </div>
+
+        </div>
+    </div>
     <script>
         let submitBtn = document.querySelector('#submit');
         let usuarioLbl = document.querySelector('#usuario');

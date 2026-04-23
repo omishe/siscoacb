@@ -5,29 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Container</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-<?php
-   session_start();
+    <?php
+    session_start();
 
     if (isset($_SESSION["usuario"])) {
         //header("Location:dashboard.php");
     }
-?>
+    ?>
 
-    <form action="" method="POST" class="form">
-        <h1 class="login-title">Container Registration</h1>
-        <input type="text" name="nombre" id="nombre" placeholder="nombre" required><br />
-        <input type="text" name="altura" id="altura" placeholder="altura" required><br />
-        <input type="text" name="radio" id="radio" placeholder="radio" required><br />
-        <input type="text" name="casa_idCasa" id="casa_idCasa" placeholder="Casa_idCasa" required><br />
-        <input type="button" name="submit" id="submit" value="Register" class=" login-button" />
-        <input type="hidden" name="optionLbl" id="optionLbl" value="InsertContainer">
-    </form>
-    <p class="link">Already have an account? <a href="login.php">Login here</a></p>
-
+    <div class="container">
+        <div class="form-container">
+            <p class="title_main">Sistema de control SISCOACB</p>
+            <div class="inner-container">
+                <form action="" method="POST" class="form">
+                    <h1 class="login-title">Container Registration</h1>
+                    <div class="input-group">
+                        <label for="nombre">Nombre del contenedor: </label>
+                        <input type="text" name="nombre" id="nombre" placeholder="nombre del contenedor" required><br />
+                    </div>
+                    <div class="input-group">
+                        <label for="altura">Altura del contenedor (cm): </label>
+                        <input type="text" name="altura" id="altura" placeholder="Altura del contenedor (cm)" required><br />
+                    </div>
+                    <div class="input-group">
+                        <label for="radio">Radio del contenedor (cm): </label>
+                        <input type="text" name="radio" id="radio" placeholder="Radio del contenedor (cm)" required><br />
+                    </div>
+                    <div class="input-group">
+                        <label for="casa_idCasa">ID de la casa: </label>
+                        <input type="text" name="casa_idCasa" id="casa_idCasa" placeholder="ID de la casa"
+                            value="<?php echo $_SESSION["idCasa"]; ?>" disabled><br />
+                    </div>
+                    <input type="button" name="submit" id="submit" value="Register" class=" login-button" />
+                    <input type="hidden" name="optionLbl" id="optionLbl" value="InsertContainer">
+                </form>
+            </div>
+            <div class="account-field">
+                <p>Volver al dashboard: <a href="dashboard.php">Dashboard</a> | Logout: <a href="logout.php">Aquí</a>
+                </p>
+            </div>
+        </div>
+    </div>
     <script>
         let submitBtn = document.querySelector('#submit');
         let nombreLbl = document.querySelector('#nombre');
