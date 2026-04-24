@@ -3,6 +3,7 @@
 class Casa extends Conectar
 {
 
+// Obtenemos todos los datos
     public function get_all_homes()
     {
 
@@ -18,6 +19,20 @@ class Casa extends Conectar
 
     }
 
+    // Obtenemos el nombre de la primera casa registrada por id del usuario
+
+    public function get_home_by_user_id($userId){
+        $conectar = parent::conexion();
+        parent::set_name();
+
+        $sql = "SELECT * FROM Casa WHERE Usuario_idUsuario = $userId LIMIT 1";
+        $sql = $conectar -> prepare($sql);
+        $sql -> execute();
+
+        return $resultado = $sql -> fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Insertamos una nueva casa
     public function insert_home($casaDTO)
     {
         $conectar = parent::conexion();

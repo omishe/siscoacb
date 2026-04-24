@@ -18,6 +18,16 @@ class Sensor extends Conectar
 
     }
 
+    public function get_sensor_by_content_id($contentId1, $contentId2){
+        $conectar = parent::conexion();
+        parent::set_name();
+        $sql = "SELECT * FROM Sensor WHERE Contenedor_idContenedor = $contentId1 OR Contenedor_idContenedor = $contentId2";
+        $sql = $conectar -> prepare($sql);
+        $sql->execute();
+
+        return $resultado = $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function insert_sensor($sensorDTO)
     {
         $conectar = parent::conexion();

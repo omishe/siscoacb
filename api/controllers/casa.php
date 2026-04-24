@@ -40,7 +40,16 @@ switch ($body["option"]) {
         $datos = $casa->insert_home($casaDTO);
         //var_dump($datos);
         echo json_encode('{"value": "true"}');
+        //$_SESSION['idCasa'] = $datos[0]['idCasa'];
+        break;
+
+    case "GetHomeByUserId":
+        $userId = $body["userId"];
+        $datos = $casa->get_home_by_user_id($userId);
+        //var_dump($datos);
         $_SESSION['idCasa'] = $datos[0]['idCasa'];
+        $_SESSION['nombreCasa'] = $datos[0]['nombre'];
+        echo json_encode( $datos );
         break;
 
 

@@ -28,14 +28,24 @@ $medicionDTO = new MedicionDTO(
 );
 
 switch ($body["option"]) {
-    // Todas las casas
+    // Todas las mediciones
     case 'GetAll':
         $datos = $contenedor->get_all();
         echo json_encode($datos);
         break;
 
+    case 'GetMeditionBySensorId':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_medition_by_id_sensor($idSensor);
+        echo json_encode($datos);
+        break;
+
+        case 'GetLastMeditionTime':
+            //$datos = $contenedor->get_last_medition_time();
+
+
     case "InsertMedicion":
-        $datos = $contenedor -> insert_medicion($medicionDTO);
+        $datos = $contenedor->insert_medicion($medicionDTO);
         echo json_encode('{"value": "true"}');
         break;
 

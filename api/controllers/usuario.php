@@ -38,10 +38,17 @@ switch ($body["option"]) {
 
         //var_dump($datos[0]['idUsuario']);
         //echo json_encode($datos);
-        echo json_encode('{"value": "true"}');
 
-        $_SESSION['usuario'] = $usuarioDTO -> usuario;
-        $_SESSION['idUsuario'] = $datos[0]['idUsuario'];
+        if (count($datos) == 0) {
+            echo json_encode('{"value": "false"}');
+        } else {
+            $_SESSION['usuario'] = $datos[0]['usuario'];
+            $_SESSION['idUsuario'] = $datos[0]['idUsuario'];
+
+            echo json_encode('{"value": "true"}');
+        }
+
+
 
         break;
 

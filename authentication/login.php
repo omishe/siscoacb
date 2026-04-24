@@ -74,9 +74,12 @@
             }).then(response => response.json())
                 .then(result => {
                     console.log("Llega aqui")
+                    console.log(result);
                     let valueJSON = JSON.parse(result)
                     if (valueJSON.value) {
                         location.href = "http://localhost/siscoacb-api/authentication/dashboard.php";
+                    } else {
+                        console.log('Usuario no valido')
                     }
                 })
                 .catch(error => console.error('Error: ', error));

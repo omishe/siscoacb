@@ -18,6 +18,17 @@ class Contenedor extends Conectar
 
     }
 
+    public function get_containers_by_house_id($houseId){
+        $conectar = parent::conexion();
+        parent::set_name();
+
+        $sql = "SELECT * FROM Contenedor WHERE Casa_idCasa = $houseId";
+        $sql = $conectar -> prepare($sql);
+        $sql -> execute();
+
+        return $resultado = $sql -> fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function insert_container($containerDTO)
     {
         $conectar = parent::conexion();

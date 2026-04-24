@@ -36,15 +36,19 @@ switch ($body["option"]) {
         echo json_encode($datos);
         break;
 
+    case "GetContentsByHouseId":
+        $houseId = $body['houseId'];
+        $datos = $contenedor->get_containers_by_house_id($houseId);
+        $_SESSION['idContenedor1'] = $datos[0]['idContenedor'];
+        $_SESSION['nombreContenedor1'] = $datos[0]['nombre'];
+        $_SESSION['idContenedor2'] = $datos[1]['idContenedor'];
+        $_SESSION['nombreContenedor2'] = $datos[1]['nombre'];
+        echo json_encode($datos);
+        break;
+
     case "InsertContainer":
         $datos = $contenedor->insert_container($contenedorDTO);
-
-        if (!isset($_SESSION['idContenedor'])) {
-            $_SESSION['idContenedor'] = $datos[0]['idContenedor'];
-        }
-
         echo json_encode('{"value": "true"}');
-
         break;
 
     default:

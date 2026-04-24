@@ -22,6 +22,18 @@ if (!isset($_SESSION['usuario'])) {
 </head>
 
 <body>
+    <form>
+        <input type="hidden" id="idUsuario" value="<?php echo $_SESSION['idUsuario']; ?>" />
+        <input type="hidden" id="usuario" value="<?php echo $_SESSION['usuario']; ?>" />
+        <input type="hidden" id="idCasa" value="<?php echo $_SESSION['idCasa']; ?>" />
+        <input type="hidden" id="nombreCasa" value="<?php echo $_SESSION['nombreCasa']; ?>" />
+        <input type="hidden" id="idContenedor1" value="<?php echo $_SESSION['idContenedor1']; ?>" />
+        <input type="hidden" id="nombreContenedor1" value="<?php echo $_SESSION['nombreContenedor1']; ?>" />
+        <input type="hidden" id="idContenedor2" value="<?php echo $_SESSION['idContenedor2']; ?>" />
+        <input type="hidden" id="nombreContenedor2" value="<?php echo $_SESSION['nombreContenedor2']; ?>" />
+        <input type="hidden" id="idSensor1" value="<?php echo '' . $_SESSION['idSensor1']; ?>" />
+        <input type="hidden" id="idSensor2" value="<?php echo '' . $_SESSION['idSensor2']; ?>" />
+    </form>
     <div class="container">
         <div class="dashboard-container">
             <h1 class="title_main">Dashboard</h1>
@@ -32,23 +44,28 @@ if (!isset($_SESSION['usuario'])) {
                         <?php echo $_SESSION['usuario']; ?>
                     </h2>
                     <h3>Nombre de la casa:
-                        <?php if (isset($_SESSION['idCasa'])) {
-                            echo $_SESSION['idCasa'];
-                        } else {
-                            echo "Sin casa registrada";
-                        } ?>
+                        <span id="nomCasa">
+                            <?php if (isset($_SESSION['idCasa'])) {
+                                echo $_SESSION['idCasa'];
+                            } else {
+                                echo "Sin casa registrada";
+                            } ?>
+                        </span>
                     </h3>
                 </div>
 
 
                 <div class="container-register">
-                    <p>Registrar casa: <a href="casa.php">Click aquí</a></p>
-                    <p>Registrar contenedor: <a href="contenedor.php">Click aquí</a></p>
+                    <p>Registrar casa: <a id="registrarCasaBtn" href="casa.php">Click aquí</a></p>
+                    <p>Registrar contenedor: <a id="registrarContenedorBtn" href="contenedor.php">Click aquí</a></p>
                 </div>
 
                 <div class="container-graficas">
                     <div class="container-contenedor">
-                        <h2 class="container-charge-percent">Porcentaje de llenado del contenedor: 80%</h2>
+                        <h2 class="container-charge-percent">Porcentaje de llenado de:<br />
+                            <span id="nomContainer1"><?php echo $_SESSION["nombreContenedor1"]; ?></span>
+                            <span>80%</span>
+                        </h2>
                         <div class="contenedor-carga">
                             <div class="relleno"></div>
                         </div>
@@ -58,25 +75,16 @@ if (!isset($_SESSION['usuario'])) {
                                 <span>Fecha</span>
                                 <span>Nivel en cm</span>
                             </div>
-                            <div class="recent-measure">
-                                <span>1</span>
-                                <span>2026-04-20 12:17:06</span>
-                                <span>266.6</span>
+                            <div id="recent_measures1">
+
                             </div>
-                            <div class="recent-measure">
-                                <span>2</span>
-                                <span>2026-04-20 13:17:06</span>
-                                <span>270.0</span>
-                            </div>
-                            <div class="recent-measure">
-                                <span>3</span>
-                                <span>2026-04-20 11:17:06</span>
-                                <span>260.6</span>
-                            </div>
+
                         </div>
                     </div>
                     <div class="container-contenedor">
-                        <h2 class="container-charge-percent">Porcentaje de llenado de la pileta: 20%</h2>
+                        <h2 class="container-charge-percent">Porcentaje de llenado de:<br />
+                            <span id="nomContainer2"><?php echo $_SESSION["nombreContenedor2"]; ?></span>
+                            <span>20%</span></h2>
                         <div class="contenedor-carga">
                             <div class="relleno-pileta"></div>
                         </div>
@@ -86,20 +94,8 @@ if (!isset($_SESSION['usuario'])) {
                                 <span>Fecha</span>
                                 <span>Nivel en cm</span>
                             </div>
-                            <div class="recent-measure">
-                                <span>1</span>
-                                <span>2026-04-20 12:17:06</span>
-                                <span>66.6</span>
-                            </div>
-                            <div class="recent-measure">
-                                <span>2</span>
-                                <span>2026-04-20 13:17:06</span>
-                                <span>70.0</span>
-                            </div>
-                            <div class="recent-measure">
-                                <span>3</span>
-                                <span>2026-04-20 11:17:06</span>
-                                <span>60.6</span>
+                            <div id="recent_measures2">
+
                             </div>
                         </div>
                     </div>
@@ -131,18 +127,142 @@ if (!isset($_SESSION['usuario'])) {
         </div>
     </div>
     </div>
-    <form>
-        <input type="hidden" id="idUsuario" value="<?php echo $_SESSION['idUsuario']; ?>">
-    </form>
+
     <script>
         window.addEventListener("load", function () {
             // Hacemos un llamado a la raspberry
 
-            const idUsuario = document.querySelector("#idUsuario").value;
+            // Usamos el id del usuario para obtener la priemra casa registrada
+            const userId = document.querySelector("#idUsuario").value;
             //console.log('El id del usuario es: ', idUsuario)
 
-            postData(url = "http://localhost/siscoacb-api/api/controllers/casa.php", data = { "option": "GetAll" });
-            //getUserData();
+            postData(url = "http://localhost/siscoacb-api/api/controllers/casa.php", data = {
+                "option": "GetHomeByUserId",
+                "userId": userId
+            }).then((result) => {
+                console.log("Termino la primera", result)
+
+                if (result.length <= 0) {
+                    console.log("No ha registrado aun ninguna casa")
+                    return
+                }
+
+
+                // Configuramos los elementos referentes a la casa del usuario
+                let nomCasa = document.querySelector('#nomCasa');
+                nomCasa.textContent = result[0].nombre;
+                let = registrarCasaBtn = document.querySelector("#registrarCasaBtn");
+                registrarCasaBtn.style.pointerEvents = 'none';
+                registrarCasaBtn.style.color = 'gray';
+                registrarCasaBtn.style.cursor = 'default';
+
+                // Usamos el id de la casa para obtener los contenedores
+                const houseId = result[0].idCasa;
+
+                postData(url = "http://localhost/siscoacb-api/api/controllers/contenedor.php", data = {
+                    "option": "GetContentsByHouseId",
+                    "houseId": houseId
+                }).then((result) => {
+                    console.log("Termino la segunda", result)
+
+                    if (result.length <= 0) {
+                        console.log("No ha registrado aun ningun tinaco")
+                        return
+                    }
+
+                    // Configuramos los elementos de los contenedores
+                    let = registrarCasaBtn = document.querySelector("#registrarContenedorBtn");
+
+                    // Usamos el id del primer contenedor para obtener su sensor y nombre
+                    let idContenedor1Value = result[0].idContenedor;
+                    let nomContainer1 = document.querySelector("#nomContainer1");
+                    nomContainer1.innerHTML = result[0].nombre;
+
+                    if (result.length <= 1) {
+                        console.log("Le fata un tinaco")
+                        return
+                    }
+
+                    // Usamos el id del segundo contenedor para obtener su sensor y nombre
+                    let idContenedor2Value = result[1].idContenedor;
+                    let nomContainer2 = document.querySelector("#nomContainer2");
+                    nomContainer2.innerHTML = result[1].nombre;
+
+                    // Aquí desabilitamos el botón de registro de contenedores cuando ya son 2
+
+                    if (result.length >= 2) {
+
+                        registrarCasaBtn.style.pointerEvents = 'none';
+                        registrarCasaBtn.style.color = 'gray';
+                        registrarCasaBtn.style.cursor = 'default';
+                    }
+
+                    postData(url = "http://localhost/siscoacb-api/api/controllers/sensor.php", data = {
+                        "option": "GetSensorByContentId",
+                        "contentId1": idContenedor1Value,
+                        "contentId2": idContenedor2Value
+                    }).then((result) => {
+                        console.log("Termino la tercera", result)
+                        // Usamos los id de los sensores para traer los tres registros más recientes en orden descendnte
+
+                        if (result.length <= 0) {
+                            console.log("No ha registrado aun ningun sensor")
+                            return
+                        }
+
+                        let idSensor1Value = result[0].idSensor;
+                        let idSensor2Value = result[1].idSensor;
+
+                        postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
+                            "option": "GetMeditionBySensorId",
+                            "idSensor": idSensor1Value
+                        }).then((result) => {
+                            console.log("Termino la cuarta", result)
+
+                            // Entramos en los datos del sensor 1
+                            myStr = "";
+                            for (let i = 0; i < result.length; i++) {
+                                let myDiv = document.createElement('div');
+                                myDiv.className = "recent-measure";
+
+                                let myObject = result[i];
+                                let myStr = '<span>' + myObject.idMedicion + '</span><span>' + myObject.fecha + '</span><span>' + myObject.nivelCm + '</span>';
+
+                                myDiv.innerHTML = myStr;
+
+                                recent_measures1.appendChild(myDiv);
+                                myStr = "";
+                            }
+
+                            postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
+                                "option": "GetMeditionBySensorId",
+                                "idSensor": idSensor2Value
+                            }).then((result) => {
+                                console.log("Termino la quinta", result)
+
+                                // Entramos en los datos del sensor 2
+                                myStr = "";
+                                for (let i = 0; i < result.length; i++) {
+                                    let myDiv = document.createElement('div');
+                                    myDiv.className = "recent-measure";
+
+                                    let myObject = result[i];
+                                    let myStr = '<span>' + myObject.idMedicion + '</span><span>' + myObject.fecha + '</span><span>' + myObject.nivelCm + '</span>';
+
+                                    myDiv.innerHTML = myStr;
+
+                                    recent_measures2.appendChild(myDiv);
+                                    myStr = "";
+                                }
+
+                            });
+                        })
+
+
+                    })
+                })
+            });
+
         });
 
 
@@ -163,15 +283,13 @@ if (!isset($_SESSION['usuario'])) {
 
                 const result = await response.json(); // Wait for the response body to be parsed
 
-                //console.log(result);
-
                 return result;
             } catch (error) {
                 console.error("Error sending POST data:", error); // Handle network errors or server issues
             }
         }
 
-        async function getUserData() {
+        /*async function getUserData() {
 
             try {
                 // Execution pauses here until the fetch completes
@@ -185,7 +303,7 @@ if (!isset($_SESSION['usuario'])) {
                 // Handles any error from the awaited promises
                 console.error("Failed to fetch data:", error);
             }
-        }
+        }*/
 
 
         // llamado al tipo de vista de consumo
