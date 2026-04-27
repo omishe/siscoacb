@@ -43,6 +43,8 @@ switch ($body["option"]) {
         $_SESSION['nombreContenedor1'] = $datos[0]['nombre'];
         $_SESSION['idContenedor2'] = $datos[1]['idContenedor'];
         $_SESSION['nombreContenedor2'] = $datos[1]['nombre'];
+        $_SESSION['alturaContenedor1'] = $datos[0]['altura'];
+        $_SESSION['alturaContenedor2'] = $datos[1]['altura'];
         echo json_encode($datos);
         break;
 

@@ -40,15 +40,62 @@ switch ($body["option"]) {
         echo json_encode($datos);
         break;
 
-        case 'GetLastMeditionTime':
-            //$datos = $contenedor->get_last_medition_time();
+    case 'GetRecent24HrsValues':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_recent_24_hrs_values($idSensor);
+        echo json_encode($datos);
+        break;
 
+    case 'GetRecentTodayValues':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_today_values($idSensor);
+        echo json_encode($datos);
+        break;
+
+    case 'GetServiceStatus':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_service_status($idSensor);
+        //var_dump($datos[0]["ultimo_llenado"]);
+        $fecha_db = $datos[0]["ultimo_llenado"];
+        $ultimoLlenado = new DateTime($fecha_db);
+        $hoy = new DateTime();
+        $diferencia = $hoy->diff($ultimoLlenado);
+
+        $diasLimite = 3;
+        //var_dump($diferencia->days);
+        if ($diferencia->days >= $diasLimite) {
+            //echo 'Enviar mensaje: ';
+        }
+
+        echo json_encode($diferencia->days);
+        break;
+
+    case 'GetDataDays':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_data_days($idSensor);
+        $etiquetas = array_column($datos, 'etiqueta');
+        $datos = array_column($datos, 'total');
+        echo json_encode([$etiquetas, $datos]);
+        break;
+
+    case 'GetDataMonths':
+        $idSensor = $body['idSensor'];
+        $datos = $contenedor->get_data_months($idSensor);
+        $etiquetas = array_column($datos, 'etiqueta');
+        $datos = array_column($datos, 'total');
+        echo json_encode([$etiquetas, $datos]);
+        break;
+
+    case 'GetWaterContainerLevel':
+        $idSensorValue = $body['idSensor'];
+        $datos = $contenedor->get_water_container_level($idSensorValue);
+        echo json_encode($datos);
+        break;
 
     case "InsertMedicion":
         $datos = $contenedor->insert_medicion($medicionDTO);
         echo json_encode('{"value": "true"}');
         break;
-
 
     default:
         print ("Sin opción de selección");

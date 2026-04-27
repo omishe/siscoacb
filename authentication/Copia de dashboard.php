@@ -118,7 +118,7 @@ if (!isset($_SESSION['usuario'])) {
                 </div>
 
                 <div class="container-no-service">
-                    <p>Días sin servicio: <span id="dias_sin_servicio" >0</span></p>
+                    <p>Días sin servicio: <span class="no-service-days-green">0</span></a>
                 </div>
 
                 <div class="container-logout">
@@ -292,35 +292,6 @@ if (!isset($_SESSION['usuario'])) {
                                         animContainer2.dataset.promedio = result[0].promedio;
                                         //Configuramos la animacion del contenedor
                                         setAnimationContainer(animContainer2, 2);
-
-                                        // Seteamos dias sin servicio
-
-                                        postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
-                                            "option": "GetServiceStatus",
-                                            "idSensor": idSensor2Value
-                                        }).then((result) => {
-                                            console.log('OK', result)
-
-
-                                            let dias_sin_servicio = document.querySelector("#dias_sin_servicio");
-                                            dias_sin_servicio.innerHTML = result;
-
-                                            dias_sin_servicio.classList.remove("service_0", "service_1","service_2");
-
-                                            if (result >= 2) {
-                                                //dias_sin_servicio.classList.add("service_2");
-                                                dias_sin_servicio.style.color = "#E7180B";
-                                                dias_sin_servicio.style.fontWeight = "bold"
-                                            } else if (result >= 1) {
-                                                console.log("estoy en uno")
-                                                dias_sin_servicio.style.color = "#FDC745";
-                                                dias_sin_servicio.style.fontWeight = "bold"
-                                            } else if (result >= 0) {
-                                                console.log("estoy en cero")
-                                                dias_sin_servicio.style.color = "#5EA529";
-                                                dias_sin_servicio.style.fontWeight = "bold"
-                                            }
-                                        });
                                     })
                                 })
 
@@ -418,40 +389,17 @@ if (!isset($_SESSION['usuario'])) {
 
         // funcion que responde al evento de seleccion del chart
         function getChartData(tipoDeLista) {
+            console.log(selectedSensor)
+            console.log("Tanque lleno: ", fullfilledContainer)
             if (selectedSensor > 0) {
                 switch (tipoDeLista) {
                     case "hour":
                         postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
-                            "option": "GetRecentTodayValues",
+                            "option": "GetRecent24HrsValues",
                             "idSensor": selectedSensor
                         }).then((result) => {
-                            console.log('hour');
                             hourDataProccess(result);
-                        });
-                        break;
-
-                    case "day":
-                        postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
-                            "option": "GetDataDays",
-                            "idSensor": selectedSensor
-                        }).then((result) => {
-                            console.log('day');
-                            myChart.data.labels = result[0];
-                            myChart.data.datasets[0].data = result[1];
-                            myChart.update();
-                        });
-                        break;
-
-                    case "month":
-                        postData(url = "http://localhost/siscoacb-api/api/controllers/medicion.php", data = {
-                            "option": "GetDataMonths",
-                            "idSensor": selectedSensor
-                        }).then((result) => {
-                            console.log('month');
-                            myChart.data.labels = result[0];
-                            myChart.data.datasets[0].data = result[1];
-                            myChart.update();
-                        });
+                        })
                         break;
 
                     default:
@@ -460,53 +408,88 @@ if (!isset($_SESSION['usuario'])) {
             }
         }
 
-        let currentHour = null;
-        let hoursLabels = [];
-        let hoursConsumptions = [];
-        let consumptionAux = 0;
-        let hourLabel = "";
+        let hoursDonoutGraphicArray = [];
+        let heightsDonoutGraphicArray = [];
+        let consumptionsDonoutGraphicArray = [];
+        let selectedHour = 0;
+        let consumAcum = 0;
 
         // funcion para procesar los datos de grafica de dona por horas
         function hourDataProccess(data) {
             if (data.length <= 0) {
                 return;
             } else {
-
+                let counter = 0;
+                hoursDonoutGraphicArray = [];
+                consumptionsDonoutGraphicArray = [];
+                heightsDonoutGraphicArray = [];
+                selectedHour = 0;
                 // Iteramos en cada elemento devuelto por el servidor
                 data.forEach(element => {
                     let date = element.fecha;
-                    let consumption = parseFloat(element.volumen);
+                    let cmLevel = parseFloat(element.nivelCm);
                     let hour = date.substring(date.indexOf(" ")).trim();
-                    let myCompleteHour = hour.substring(0, hour.lastIndexOf(":"));
-                    let myHourInt = hour.substring(0, hour.indexOf(":"));
+                    let myHourStr = hour.substring(0, hour.lastIndexOf(":"));
 
-                    if (currentHour == null) {
-                        //consumptionAux = consumption;
-                        currentHour = myHourInt;
-                    } else if (currentHour != myHourInt) {
-                        hoursConsumptions.push(consumptionAux);
-                        hourLabel = currentHour + ":00";
-                        hoursLabels.push(hourLabel);
-                        currentHour = myHourInt;
+                    let myHourInt = parseInt(hour.substring(0, hour.indexOf(":")));
+                    //Aquí procesamos los datos restando o regresando a la altura del contenedor lleno
 
-                        consumptionAux = 0;
-                        //console.log("Cambiamos la hora: ", myHourInt, "El consumo es: ", consumptionAux);
+                    // verificamos que el array de consumo no este vacio para poder hacer la comparaciones
+                    if (!consumptionsDonoutGraphicArray.length <= 0) {
 
+                        // hacemos la resta del valor previo con el actual
+                        let previousLevel = heightsDonoutGraphicArray[counter - 1];
+                        console.log('prevLevel', previousLevel)
+                        let myConsumption = previousLevel - cmLevel;
+
+                        // Revisamos si la resta es igual o menor a cero y le asignamos la altura del contenedor ideal lleno
+                        if (myConsumption < 0) {
+                            myConsumption = fullfilledContainer;
+                        }
+
+                        consumAcum += myConsumption;
+
+                        console.log('acum::: ', consumAcum)
+
+                        if (selectedHour != myHourInt) {
+                            let consumptionStrFormat = myHourStr + " " + consumAcum + "L.";
+                            /*if(myConsumption == fullfilledContainer){
+                               consumptionStrFormat = myHourStr + " Recarga."
+                           }*/
+                            hoursDonoutGraphicArray.push(consumptionStrFormat); // labels
+                            heightsDonoutGraphicArray.push(cmLevel); //alturas
+                            consumptionsDonoutGraphicArray.push(consumAcum); // consumos
+
+                        } else {
+                            consumAcum = 0;
+                        }
+                    } else {
+                        let consumptionStrFormat = myHourStr + " " + cmLevel + "L.";
+                        hoursDonoutGraphicArray.push(consumptionStrFormat);
+                        heightsDonoutGraphicArray.push(cmLevel)
+
+                        consumptionsDonoutGraphicArray.push(cmLevel);
+                        selectedHour = myHourInt;
                     }
-                    consumptionAux += consumption;
+
+                    selectedHour = myHourInt;
+                    consumAcum = 0;
+                    counter++;
+                    //let hourArray = hour.split(":");
+                    //let timestamp = new Date(hour[0], hour[1], hour[2]);
+                    //let timestamp = Date.parse(date)
+                    //console.log("Mi hora es:", hour, "Mi horaInt es:", myHourInt, "y el nivel de mi agua es:", cmLevel);
+                    //console.log("My timestamp es: ", timestamp);
+
                 });
-
-                hoursConsumptions.push(consumptionAux);
-                hourLabel = currentHour + ":00";
-                hoursLabels.push(hourLabel);
             }
-
-            //console.log(hoursConsumptions);
-            //console.log(hoursLabels);
-
-            myChart.data.labels = hoursLabels;
-            myChart.data.datasets[0].data = hoursConsumptions;
+            myChart.data.labels = hoursDonoutGraphicArray;
+            myChart.data.datasets[0].data = consumptionsDonoutGraphicArray;
             myChart.update();
+
+            console.log(hoursDonoutGraphicArray)
+            console.log(heightsDonoutGraphicArray);
+            console.log(consumptionsDonoutGraphicArray)
 
         }
 
@@ -555,16 +538,63 @@ if (!isset($_SESSION['usuario'])) {
 
             switch (tipoDeLista) {
                 case 'hour':
-                    getChartData(tipoDeLista);
+                    getChartData(tipoDeLista)
                     break;
                 case 'day':
-                    getChartData(tipoDeLista);
+                    console.log('Solicitaste dias');
+                    myChart.data.labels = [
+                        'Domingo',
+                        'Lunes',
+                        'Martes',
+                        'Miércoles',
+                        'Jueves',
+                        'Viernes',
+                        'Sábado'];
+
+                    myChart.data.datasets[0].data = [
+                        '217',
+                        '42',
+                        '150',
+                        '186',
+                        '241',
+                        '58',
+                        '104'
+                    ]
+
                     break;
                 case 'month':
-                    getChartData(tipoDeLista);
+                    console.log('Solicitaste meses');
+                    myChart.data.labels = [
+                        'Enero',
+                        'Febrero',
+                        'Marzo',
+                        'Abril',
+                        'Mayo',
+                        'Junio',
+                        'Julio',
+                        'Agosto',
+                        'Septiembre',
+                        'Octubre',
+                        'Noviembre',
+                        'Diciembre'];
+
+                    myChart.data.datasets[0].data = [
+                        '1040',
+                        '900',
+                        '1540',
+                        '698',
+                        '2785',
+                        '1987',
+                        '2020',
+                        '236',
+                        '990',
+                        '1240',
+                        '475',
+                        '963'
+                    ]
                     break;
             }
-
+            myChart.update();
         });
 
 
